@@ -18,3 +18,4 @@ blank.bin                             0x3fe000
 eagle.flash.bin                       0x00000
 eagle.irom0text.bin                   0x10000
 PS:具體燒錄地址還要看生成文件
+![image](https://github.com/C:\Users\Administrator\Desktop\学习\ESP8266\123.jpg)
