@@ -11,3 +11,10 @@ SPI_MODE?=DOUT
 SPI_SIZE_MAP?=4
 /************************************command 设置******************************//
 make COMPILE=gcc BOOT=none APP=0 SPI_SPEED=40 SPI_MODE=DOUT SPI_SIZE_MAP=4
+/*********************************燒錄下載地址设置******************************//
+blank.bin                             0x3fb000
+esp_init_data_default_v08.bin         0x3fc000
+blank.bin                             0x3fe000
+eagle.flash.bin                       0x00000
+eagle.irom0text.bin                   0x10000
+PS:具體燒錄地址還要看生成文件
