@@ -33,6 +33,7 @@ void ICACHE_FLASH_ATTR user_init(void)
     }
 }
 /*******************************************************************************/
-os_delay_us為us級別的延時函數通過os_delay_us函數創建delay_ms毫秒函數控制gpio16高低電平變化，控制LED燈1s變化一次。
-os_delay_us函數us定時並不精確
-必須添加system_soft_wdt_feed(); 餵看門狗防止系統復位。
+//os_delay_us為us級別的延時函數通過os_delay_us函數創建delay_ms毫秒函數控制gpio16高低電平變化，控制LED燈1s變化一次。
+//os_delay_us函數us定時並不精確
+//必須添加system_soft_wdt_feed(); 餵看門狗防止系統復位。
+//gpio16引腳控制前需要引用頭文件 #include "driver/gpio16.h"
