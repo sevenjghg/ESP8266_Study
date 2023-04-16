@@ -24,7 +24,7 @@ void ICACHE_FLASH_ATTR user_init(void)
     gpio16_output_set(0);   //GPIO16輸出低電平
     while(1)
     {
-    	  system_soft_wdt_feed();  //餵狗放置系統復位
+    	system_soft_wdt_feed();  //餵狗放置系統復位
         gpio16_output_set(0);
         delay_ms(1000);
         gpio16_output_set(1);
