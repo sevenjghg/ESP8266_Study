@@ -26,13 +26,13 @@ void ICACHE_FLASH_ATTR user_init(void)
 *******************************************************************************/
 void ICACHE_FLASH_ATTR user_init(void)
 {
-	/********************************************
-	* void	uart_init(
-				UartBautRate	uart0_br,	
-				UartBautRate	uart1_br
-        )串口初始化函數UartBautRate	uart0_br：UART0 波特率 UartBautRate	uart1_br：UART1 波特率
-  * uart0_sendStr()  uart0發送字符串函數
-	*********************************************/
+/********************************************
+* void	uart_init(
+		   UartBautRate	uart0_br,	
+		   UartBautRate	uart1_br
+                  )串口初始化函數UartBautRate	uart0_br：UART0 波特率 UartBautRate	uart1_br：UART1 波特率
+* uart0_sendStr()  uart0發送字符串函數
+*********************************************/
 	uart_init(9600,9600);
 	delay_ms(1000);
 	while(1)
