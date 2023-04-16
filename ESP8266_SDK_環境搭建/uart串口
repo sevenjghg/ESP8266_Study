@@ -1,0 +1,45 @@
+/******************************************************************************
+ * FunctionName : user_init
+ * Description  : entry of user application, init user function here
+ * Parameters   : none
+ * Returns      : none
+*******************************************************************************/
+void ICACHE_FLASH_ATTR user_init(void)
+{
+	/****************************************************************************
+  * os_printf()打印字符
+  * 本接⼝默认从 UART 0 打印。IOT_Demo 中的 uart_init 可以设置波特率，将 os_printf 改
+    为从 UART 1 打印：os_install_putc1((void	*)uart1_write_char);
+  * 请勿调⽤本接⼝打印超过 125 字节的数据，或者频繁连续调⽤本接⼝打印，否则可能会丢
+    失部分待打印数据
+	*****************************************************************************/
+	os_printf("SDK Version:%s\r\n",system_get_sdk_version ());
+	os_printf("\r\n Hello World \r\n");
+}
+//os_printf()為系統API下的打印函數默認波特率為74880，需要引用頭文件#include "osapi.h"  #include "user_interface.h"
+
+/******************************************************************************
+ * FunctionName : user_init
+ * Description  : entry of user application, init user function here
+ * Parameters   : none
+ * Returns      : none
+*******************************************************************************/
+void ICACHE_FLASH_ATTR user_init(void)
+{
+	/********************************************
+	* void	uart_init(
+				UartBautRate	uart0_br,	
+				UartBautRate	uart1_br
+        )串口初始化函數UartBautRate	uart0_br：UART0 波特率 UartBautRate	uart1_br：UART1 波特率
+  * uart0_sendStr()  uart0發送字符串函數
+	*********************************************/
+	uart_init(9600,9600);
+	delay_ms(1000);
+	while(1)
+	{
+		system_soft_wdt_feed();
+		uart0_sendStr("\r\n uart0_string \r\n");
+		delay_ms(1000);
+	}
+}
+//此方法調用uart0 uart1函數需要引用頭文件 #include "driver/uart.h"
