@@ -18,10 +18,10 @@ void ICACHE_FLASH_ATTR delay_ms(u32 C_time)
 *******************************************************************************/
 void ICACHE_FLASH_ATTR user_init(void)
 {
-	  gpio16_output_conf();
+    gpio16_output_conf(); //GPIO16初始化
     os_printf("SDK version:%s\n", system_get_sdk_version());
     os_printf("guotong is coming \n");
-    gpio16_output_set(0);
+    gpio16_output_set(0);   //GPIO16輸出低電平
     while(1)
     {
     	  system_soft_wdt_feed();  //餵狗放置系統復位
