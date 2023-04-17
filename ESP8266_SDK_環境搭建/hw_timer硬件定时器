@@ -1,0 +1,46 @@
+/******************************************************************************
+ * FunctionName : user_init
+ * Description  : entry of user application, init user function here
+ * Parameters   : none
+ * Returns      : none
+*******************************************************************************/
+void ICACHE_FLASH_ATTR user_init(void)
+{
+	gpio16_output_conf(); 									               //初始化gpio16
+	gpio16_output_set(1);                                  //初始电平设置为1
+	hw_timer_init(1,1);                                    //hw定时器初始化 选用nmi中断  自动装填可重复
+	hw_timer_set_func(hw_timer_interrupt);                 //定义中断回调函数
+	hw_timer_arm(1000000);                                 //定时器为时间为us级别定时1s
+	while(1)
+	{
+		system_soft_wdt_feed();                                            //喂狗防止系統復位
+	}
+}
+/*******************************硬件定时器中断处理函数***************************/
+void hw_timer_interrupt(void)
+{
+	LED = !LED;
+	gpio16_output_set(LED);
+}
+/******************************************************************************
+* void	hw_timer_init	(
+				FRC1_TIMER_SOURCE_TYPE source_type,	
+				u8	req
+        )
+• FRC1_TIMER_SOURCE_TYPE source_type：定时器的 ISR 源
+- FRC1_SOURCE：使⽤ FRC1 中断源
+- NMI_SOURCE：使⽤ NMI 中断源
+• u8	req
+- 0：不⾃动填装；
+- 1：⾃动填装
+
+* void	hw_timer_arm	(uint32 val)
+uint32 val：定时时间
+⾃动填装模式：
+- 使⽤ FRC1 中断源 FRC1_SOURCE，取值范围：50 ~ 0x199999 μs；
+- 使⽤ NMI 中断源 NMI_SOURCE，取值范围 : 100 ~ 0x199999 μs：
+⾮⾃动填装模式，取值范围：10 ~ 0x199999 μs
+
+* void	hw_timer_set_func	(void (* user_hw_timer_cb_set)(void) )
+void (* user_hw_timer_cb_set)(void)：定时器回调函数，函数定义时请勿添加ICACHE_FLASH_ATTR 宏。
+*******************************************************************************/
