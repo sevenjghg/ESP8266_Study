@@ -26,3 +26,28 @@ void OS_timer_interrupt(void)
 	LED = !LED;
 	gpio16_output_set(LED);
 }
+/******************************************************************************
+ 软件定时器任务可能被中断，或者被其他⾼优先级的任务延迟，因此以下 os_timer 系列的接⼝并不能保证定时器精确执⾏
+ * os_timer_t OS_timer_1;需要用os_timer定义全局变量
+ * void	os_timer_disarm	(os_timer_t	*ptimer) 取消定时器
+ 
+ * void	os_timer_arm	(
+				os_timer_t	*ptimer,	
+				uint32_t	milliseconds,	
+				bool	repeat_flag
+                        )   使能毫秒级定时器
+• os_timer_t	*ptimer：定时器结构
+• uint32_t	milliseconds：定时时间，单位：ms 
+- 如未调⽤ system_timer_reinit，可⽀持范围 5 ~ 0x68D7A3 
+- 如调⽤了 system_timer_reinit，可⽀持范围 100 ~ 0x689D0 
+• bool	repeat_flag：定时器是否重复
+
+*void	os_timer_setfn(
+				os_timer_t	*ptimer,	
+				os_timer_func_t	*pfunction,	
+				void	*parg
+                       )  设置回调函数
+• os_timer_t	*ptimer：定时器结构
+• os_timer_func_t	*pfunction：定时器回调函数
+• void	*parg：回调函数的参数 
+*******************************************************************************/
