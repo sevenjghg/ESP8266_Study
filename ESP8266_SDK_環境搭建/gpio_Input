@@ -29,4 +29,4 @@ void ICACHE_FLASH_ATTR user_init(void)
 	}
 }
 
-//通過四個函數讀取設置GPIO
+//通過四個函數讀取設置GPIO4使用前需要引用頭文件  #include "gpio.h"
