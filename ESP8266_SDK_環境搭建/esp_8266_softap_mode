@@ -1,0 +1,37 @@
+/******************************************************************************
+ * 設置ESP82666為AP模式
+*******************************************************************************/
+#define ap_config_ssid      "esp8266_softap"
+#define ap_config_password  "12345678"
+
+void esp8266_ap_config(void)
+{
+	struct	softap_config ap_config;                         //定義結構體變量
+
+	wifi_set_opmode (0x02);                                  //設置模式為ap模式
+	os_memset(&ap_config,0,sizeof(struct softap_config));    //將ap參數結構體清0
+	os_strcpy(ap_config.ssid,ap_config_ssid);                //設置wifi名稱
+	os_strcpy(ap_config.password,ap_config_password);        //設置wifi密碼
+	ap_config.authmode = AUTH_WPA2_PSK;
+	ap_config.beacon_interval = 100;
+	ap_config.channel =1;
+	ap_config.max_connection = 2;
+	ap_config.ssid_hidden = 0;
+	ap_config.ssid_len = os_strlen(ap_config_ssid);
+	wifi_softap_set_config(&ap_config);
+}
+/*******************************************************************************
+* os_memset(void	*s,	int	ch,	size_t	n) 在⼀段内存块中填充某个给定值將ch的值填充在s指針所指的內存塊內
+* os_strcpy(ap_config.ssid,ap_config_ssid);  字符串複製函數 將ap_config_ssid的字符串複製到ap_config.ssid內
+* os_strlen(ap_config_ssid);     獲取字符串長度函數
+* wifi_set_opmode (0x02); 設置esp8266模式
+* struct	softap_config ap_config;     定義結構體變量名為ap_config通過改變結構體變量內的數值初始化esp8266
+* wifi_softap_set_config(&ap_config); softap模式初始化函數
+  ap_config.ssid              定義wifi名稱
+  ap_config.password          定義wifi密碼不能少於8位
+  ap_config.authmode          設置加密模式
+  ap_config.beacon_interval   信標間隔時槽 100-60000ms
+  ap_config.channel           設置通道數
+  ap_config.max_connection    設置最大連接數量
+  ap_config.ssid_len          wifi名稱字符串長度
+*******************************************************************************/
