@@ -1,5 +1,63 @@
 
+/******************************************************************************
+ * FunctionName : user_init
+ * Description  : entry of user application, init user function here
+ * Parameters   : none
+ * Returns      : none
+*******************************************************************************/
+void ICACHE_FLASH_ATTR user_init(void)
+{
+	/**************************************************************************
+	 * PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO4_U ,FUNC_GPIO4 );                選定需要外部中斷的GPIO口
+	 * PIN_PULLUP_EN(PERIPHS_IO_MUX_GPIO4_U);                               上拉使能
+	 * GPIO_DIS_OUTPUT(GPIO_ID_PIN(4));                                     設置為輸入糢式
+	 * ETS_GPIO_INTR_DISABLE();                                             關閉中斷
+	 * ETS_GPIO_INTR_ATTACH(user_gpio_interrupt, NULL);                     定義中斷函數為user_gpio_interrupt
+	 * gpio_pin_intr_state_set( GPIO_ID_PIN(4),GPIO_PIN_INTR_NEGEDGE);      設置觸發方式為下降沿觸發
+	 * ETS_GPIO_INTR_ENABLE();                                              開啓中斷
+	 **************************************************************************/
+	gpio16_output_conf(); 									               //初始化gpio16
+	gpio16_output_set(1);                                                  //初始电平设置为1
+	PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO4_U ,FUNC_GPIO4 );                  //設置GPIO4為IO口
+	GPIO_DIS_OUTPUT(GPIO_ID_PIN(4));                                       //設置爲GPIO輸入（輸出失能）
+	PIN_PULLUP_EN(PERIPHS_IO_MUX_GPIO4_U);                                 //上拉使能
+	ETS_GPIO_INTR_DISABLE();                                               //關閉GPIO中斷
+	ETS_GPIO_INTR_ATTACH(user_gpio_interrupt, NULL);                       //注冊中斷處理函數
+	gpio_pin_intr_state_set( GPIO_ID_PIN(4),GPIO_PIN_INTR_NEGEDGE);        //設置GPIO中斷觸發方式為高電平觸發
+	ETS_GPIO_INTR_ENABLE();                                                //開啓GPIO中斷
+	while(1)
+	{
+		system_soft_wdt_feed();                                            //喂狗防止系統復位
+		gpio16_output_set(1);                                              //初始电平设置为1
+	}
+}
+/ *************************************中斷函數*****************************/
+void user_gpio_interrupt(void *arg)
+{
+	uint32	gpio_status;
+	gpio_status	=	GPIO_REG_READ(GPIO_STATUS_ADDRESS);
+	GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, gpio_status);
+	if(GPIO_INPUT_GET(GPIO_ID_PIN(4)) == 0)
+	{
+	  delay_ms(10);
+	  if(GPIO_INPUT_GET(GPIO_ID_PIN(4)) == 0)
+		 {
+			gpio16_output_set(0);//初始电平设置为0
+			delay_ms(3000);
+		 }
+	}
+}
+/ *************************************延時函數*****************************/
+void ICACHE_FLASH_ATTR delay_ms(u32 C_time)
+{
+	for(;C_time>0;C_time--)
+	{
+		os_delay_us(1000);
+	}
 
+}
+/ *************************************************************************
+觸發方式定義
 typedef enum {
 GPIO_PIN_INTR_DISABLE = 0,  // 该GPIO的中断禁止
 GPIO_PIN_INTR_POSEDGE = 1,  // 上升沿触发中断
@@ -8,4 +66,4 @@ GPIO_PIN_INTR_ANYEGDE = 3,  // 双沿触发中断
 GPIO_PIN_INTR_LOLEVEL = 4,  // 低电平
 GPIO_PIN_INTR_HILEVEL = 5   // 高电平
 } GPIO_INT_TYPE; 
-
+ *************************************************************************/
