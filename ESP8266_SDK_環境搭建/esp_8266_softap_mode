@@ -21,7 +21,7 @@ void esp8266_ap_config(void)
 	wifi_softap_set_config(&ap_config);
 }
 /*******************************************************************************
-* os_memset(void	*s,	int	ch,	size_t	n) 在⼀段内存块中填充某个给定值將ch的值填充在s指針所指的內存塊內
+* os_memset(void *s,	int ch,	size_t	n) 在⼀段内存块中填充某个给定值將ch的值填充在s指針所指的內存塊內
 * os_strcpy(ap_config.ssid,ap_config_ssid);  字符串複製函數 將ap_config_ssid的字符串複製到ap_config.ssid內
 * os_strlen(ap_config_ssid);     獲取字符串長度函數
 * wifi_set_opmode (0x02); 設置esp8266模式
