@@ -1,0 +1,32 @@
+/******************************************************************************
+ * FunctionName : user_init
+ * Description  : entry of user application, init user function here
+ * Parameters   : none
+ * Returns      : none
+*******************************************************************************/
+void ICACHE_FLASH_ATTR user_init(void)
+{
+	/**************************************************************************
+	 * PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO4_U ,FUNC_GPIO4 );      選擇GPIO4為IO口
+	 * GPIO_DIS_OUTPUT(GPIO_ID_PIN(4));                           選擇GPIO4為輸入模式（GPIO輸出失能）
+	 * PIN_PULLUP_EN(PERIPHS_IO_MUX_GPIO4_U);                     GPIO4上拉使能
+	 * GPIO_INPUT_GET(GPIO_ID_PIN(4));                            讀取GPIO4的高低電平狀態
+	 **************************************************************************/
+  gpio16_output_conf();
+  gpio16_output_set(1);                                  //初始电平设置为高電平
+	PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO4_U ,FUNC_GPIO4 );  //設置GPIO4為IO口
+	GPIO_DIS_OUTPUT(GPIO_ID_PIN(4));                       //設置爲GPIO輸入（輸出失能）
+	PIN_PULLUP_EN(PERIPHS_IO_MUX_GPIO4_U);                 //上拉使能
+	while(1)
+	{
+		system_soft_wdt_feed();                              //喂狗防止系統復位
+		if(GPIO_INPUT_GET(GPIO_ID_PIN(4)) == 0)
+		{
+			 gpio16_output_set(0);
+
+		}
+		else gpio16_output_set(1);
+	}
+}
+
+//通過四個函數讀取設置GPIO
