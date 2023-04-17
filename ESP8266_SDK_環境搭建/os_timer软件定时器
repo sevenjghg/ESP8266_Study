@@ -40,7 +40,7 @@ void OS_timer_interrupt(void)
 • uint32_t	milliseconds：定时时间，单位：ms 
 - 如未调⽤ system_timer_reinit，可⽀持范围 5 ~ 0x68D7A3 
 - 如调⽤了 system_timer_reinit，可⽀持范围 100 ~ 0x689D0 
-• bool	repeat_flag：定时器是否重复
+• bool	repeat_flag：定时器是否重复  0不重复 1重复
 
 *void	os_timer_setfn(
 				os_timer_t	*ptimer,	
