@@ -1,0 +1,28 @@
+/******************************************************************************
+ * FunctionName : user_init
+ * Description  : entry of user application, init user function here
+ * Parameters   : none
+ * Returns      : none
+*******************************************************************************/
+void ICACHE_FLASH_ATTR user_init(void)
+{
+	gpio16_output_conf(); 									             
+	gpio16_output_set(1);                                                                
+	OS_timer_1_config(500,1);
+}
+/*******************************软件定时器初始化函数*****************************/
+os_timer_t OS_timer_1;
+
+void OS_timer_1_config(uint32 timer,u8 timer_repetitive)
+{
+	os_timer_disarm	(&OS_timer_1);
+	os_timer_setfn(&OS_timer_1,(os_timer_func_t *)OS_timer_interrupt,NULL);
+	os_timer_arm(&OS_timer_1,timer, timer_repetitive);
+}
+/*******************************定时器中断处理函数*********************************/
+u8 LED;
+void OS_timer_interrupt(void)
+{
+	LED = !LED;
+	gpio16_output_set(LED);
+}
