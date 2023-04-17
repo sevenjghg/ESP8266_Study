@@ -1,0 +1,11 @@
+
+
+typedef enum {
+GPIO_PIN_INTR_DISABLE = 0,  // 该GPIO的中断禁止
+GPIO_PIN_INTR_POSEDGE = 1,  // 上升沿触发中断
+GPIO_PIN_INTR_NEGEDGE = 2,  // 下降沿触发中断
+GPIO_PIN_INTR_ANYEGDE = 3,  // 双沿触发中断
+GPIO_PIN_INTR_LOLEVEL = 4,  // 低电平
+GPIO_PIN_INTR_HILEVEL = 5   // 高电平
+} GPIO_INT_TYPE; 
+
