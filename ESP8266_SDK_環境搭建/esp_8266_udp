@@ -1,7 +1,7 @@
 /**************************esp8266_UDP 接收数据回调函数************************/
-struct espconn	udp_config;                 //网络连接的结构体，里面定义了连接的类型和回调函数等
-esp_udp ude_esp_config;                      //用来声明连接是udp，存放了端口、ip等数据
-
+struct espconn	udp_config;                 //网络连接的结构体，里面定义了连接的类型和回调函数等   
+esp_udp ude_esp_config;                      //用来声明连接是udp，存放了端口、ip等数据   
+//这两个一定要定义为全局型 不然接收数据就会一直在复位 ！！！！！！
 void udp_recv_callback(void *arg, char *pdata, unsigned short len)
 {
 
