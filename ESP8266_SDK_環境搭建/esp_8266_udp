@@ -1,0 +1,51 @@
+/**************************esp8266_UDP 接收数据回调函数************************/
+struct espconn	udp_config;                 //网络连接的结构体，里面定义了连接的类型和回调函数等
+esp_udp ude_esp_config;                      //用来声明连接是udp，存放了端口、ip等数据
+
+void udp_recv_callback(void *arg, char *pdata, unsigned short len)
+{
+
+	//arg  void形指针  pdata  传送数据指针  len 数据长度
+	struct	espconn	*pesp_conn	=	arg;
+	remot_info	*premot	= NULL;
+
+	if(pdata[0] == '0') gpio16_output_set(1);
+    if(pdata[0] == '1') gpio16_output_set(0);
+
+	os_printf("\r\n Receive message:%s \r\n",pdata);
+
+	if(espconn_get_connection_info(pesp_conn,&premot,0)	==	ESPCONN_OK)  //获取远端ip信息
+	{
+	   pesp_conn->proto.udp->remote_port	=premot->remote_port;
+	 	 pesp_conn->proto.udp->remote_ip[0]	=premot->remote_ip[0];
+	 	 pesp_conn->proto.udp->remote_ip[1]	=premot->remote_ip[1];
+	 	 pesp_conn->proto.udp->remote_ip[2]	=premot->remote_ip[2];
+	 	 pesp_conn->proto.udp->remote_ip[3]	=premot->remote_ip[3];
+	 }
+	espconn_send(arg, "Receive message!\r\n", os_strlen("Receive message!\r\n")); //发送数据
+}
+/**************************esp8266_UDP 发送数据回调函数************************/
+void udp_sent_callback(void *arg)
+{
+	os_printf("\r\n Sent message ok \r\n");
+}
+/**************************esp8266_UDP 协议设置*****************************/
+void esp8266_udp_config(void)
+{
+	//struct espconn	udp_config;                 //网络连接的结构体，里面定义了连接的类型和回调函数等
+	//esp_udp ude_esp_config;                      //用来声明连接是udp，存放了端口、ip等数据
+
+	udp_config.type = ESPCONN_UDP;              //设置连接通信方式为UDP
+	udp_config.proto.udp = &ude_esp_config;
+	udp_config.proto.udp->local_port = 8266;   //设置本地端口
+	//udp_config.proto.udp->remote_port = 8080;  //设置远程端口
+	//设置远端ip
+	//udp_config.proto.udp->remote_ip[0] = 192;
+	//udp_config.proto.udp->remote_ip[1] = 168;
+	//udp_config.proto.udp->remote_ip[2] = 4;
+	//udp_config.proto.udp->remote_ip[3] = 2;
+
+	espconn_regist_sentcb(&udp_config,udp_sent_callback); //注册成功发送⽹络数据的回调函数
+  espconn_regist_recvcb(&udp_config,udp_recv_callback); //注册成功接收⽹络数据的回调函数
+  espconn_create(&udp_config);   //建立udp协议传输
+}
