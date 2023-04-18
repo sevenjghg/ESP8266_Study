@@ -1,0 +1,19 @@
+/**************************esp8266_Station 模式初始化设置*****************************/
+//#define station_config_ssid     "iPhone1"
+//#define station_config_password "12345678"
+
+void esp8266_station_config(void)
+{
+	struct	station_config station_config;
+	char station_ssid[32] = "iPhone1";
+	char station_password[64] =  "12345678";
+
+	wifi_set_opmode(0x01);         //设置为station 模式
+	//os_strcpy(station_config.ssid,station_config_ssid);
+	//os_strcpy(station_config.password,station_config_password);
+	os_memcpy(&station_config.ssid,station_ssid,32);
+	os_memcpy(&station_config.password,station_password,64);
+	station_config.bssid_set = 0;
+	//station_config.threshold =  AUTH_WPA2_PSK;
+	wifi_station_set_config	(&station_config);
+}
