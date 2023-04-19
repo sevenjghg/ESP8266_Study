@@ -1,0 +1,56 @@
+/**************************esp8266_TCP 连接成功回调函数***********************/
+struct	espconn tcp_config;
+esp_tcp tcp_config_proto;
+
+void esp8266_tcp_connect_callback(void	*arg)
+{
+	espconn_regist_sentcb(arg,esp8266_sent_callback); //注册成功发送⽹络数据的回调函数
+	espconn_regist_recvcb(arg,esp8266_recv_callback); //注册成功接收⽹络数据的回调函数
+	os_printf("\r\n esp8266_tcp  connect \r\n");
+}
+/**************************esp8266_TCP 断开回调函数*************************/
+void esp8266_tcp_disconnect_callback(void	*arg)
+{
+	os_printf("\r\n esp8266_tcp disconnect \r\n");
+}
+/**************************esp8266_TCP 接收数据回调函数*************************/
+void esp8266_recv_callback(void *arg, char *pdata, unsigned short len)
+{
+
+	//arg  void形指针  pdata  传送数据指针  len 数据长度
+	struct	espconn	*pesp_conn	=	arg;
+	remot_info	*premot	= NULL;
+
+	if(pdata[0] == '0') gpio16_output_set(1);
+    if(pdata[0] == '1') gpio16_output_set(0);
+
+	os_printf("\r\n Receive message:%s \r\n",pdata);
+
+	espconn_send(arg, "Receive message!\r\n", os_strlen("Receive message!\r\n")); //发送数据
+}
+/**************************esp8266_TCP 发送数据回调函数************************/
+void esp8266_sent_callback(void *arg)
+{
+	os_printf("\r\n Sent message ok \r\n");
+}
+/**************************esp8266_TCP 协议设置*****************************/
+void esp8266_tcp_config(void)
+{
+	//struct	espconn tcp_config;
+	//esp_tcp tcp_config_proto;
+	tcp_config.type = ESPCONN_TCP  ;            //tcp模式通信
+	tcp_config.proto.tcp = &tcp_config_proto;
+	tcp_config.proto.tcp->local_port = 8266;    //本机端口
+	//设置远端信息
+	//tcp_config.proto.tcp->remote_port = 8080;
+	//tcp_config.proto.tcp->remote_ip[0] = 192;
+	//tcp_config.proto.tcp->remote_ip[1] = 168;
+	//tcp_config.proto.tcp->remote_ip[2] = 4;
+	//tcp_config.proto.tcp->remote_ip[3] = 2;
+	//注册回调函数
+	espconn_regist_connectcb(&tcp_config,esp8266_tcp_connect_callback);
+	espconn_regist_disconcb (&tcp_config,esp8266_tcp_disconnect_callback);
+	//espconn_regist_sentcb(&tcp_config,esp8266_sent_callback); //注册成功发送⽹络数据的回调函数
+	//espconn_regist_recvcb(&tcp_config,esp8266_recv_callback); //注册成功接收⽹络数据的回调函数
+	espconn_accept(&tcp_config);
+}
