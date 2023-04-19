@@ -49,3 +49,4 @@ void esp8266_udp_config(void)
   espconn_regist_recvcb(&udp_config,udp_recv_callback); //注册成功接收⽹络数据的回调函数
   espconn_create(&udp_config);   //建立udp协议传输
 }
+//引用头文件  #include "espconn.h"
