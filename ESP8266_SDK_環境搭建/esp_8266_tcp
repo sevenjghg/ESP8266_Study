@@ -52,6 +52,6 @@ void esp8266_tcp_config(void)
 	espconn_regist_disconcb (&tcp_config,esp8266_tcp_disconnect_callback);
 	//espconn_regist_sentcb(&tcp_config,esp8266_sent_callback); //注册成功发送⽹络数据的回调函数
 	//espconn_regist_recvcb(&tcp_config,esp8266_recv_callback); //注册成功接收⽹络数据的回调函数
-	espconn_accept(&tcp_config);
-}
+	//espconn_accept(&tcp_config);  //此时8266做sever与client通信
+	espconn_connect(&tcp_config);  //此时8266做client与sever通信
 //引用头文件  #include "espconn.h"
