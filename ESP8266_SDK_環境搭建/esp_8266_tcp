@@ -54,3 +54,4 @@ void esp8266_tcp_config(void)
 	//espconn_regist_recvcb(&tcp_config,esp8266_recv_callback); //注册成功接收⽹络数据的回调函数
 	espconn_accept(&tcp_config);
 }
+//引用头文件  #include "espconn.h"
