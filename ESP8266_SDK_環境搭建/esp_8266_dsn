@@ -1,0 +1,123 @@
+#define dns_sever  "blog.csdn.net"     //定义网站的域名地址
+/**************************esp8266域名解析回调函数***************************/
+void esp8266_dnsget_callback(const char *name,ip_addr_t	*ipaddr,void *arg)
+{
+
+	struct	espconn	*tcp_config_1	=	(struct	espconn	*)arg;
+	//dns_ip.addr = ipaddr->addr;
+	//os_printf("\r\n----------- DomainName Analyes Callback-----------\r\n");
+	if(ipaddr == NULL)
+	{
+		os_printf("\r\n----------- DomainName Analyes Error-----------\r\n");
+	}
+	else if	(ipaddr	!=	NULL)
+	{
+		os_printf("\r\n----------- DomainName Analyes Success-----------\r\n");
+		os_printf("IP_Sever: %d.%d.%d.%d\n",
+		*((uint8 *)&ipaddr->addr),*((uint8*)&ipaddr->addr+1),
+		*((uint8 *)&ipaddr->addr+2),*((uint8*)&ipaddr->addr	+3));
+
+
+		os_memcpy(tcp_config_1->proto.tcp->remote_ip,&ipaddr->addr,4);
+		espconn_connect(tcp_config_1);  //此时8266做client与sever通信
+
+	}
+}
+/**************************esp8266_TCP 协议设置*****************************/
+void esp8266_tcp_config(void)
+{
+	//struct	espconn tcp_config;
+	//esp_tcp tcp_config_proto;
+	tcp_config.type = ESPCONN_TCP  ;            //tcp模式通信
+	tcp_config.proto.tcp = &tcp_config_proto;
+	tcp_config.proto.tcp->local_port = 8266;    //本机端口
+	//设置远端信息
+	tcp_config.proto.tcp->remote_port = 80;   //远端服务器端口赋值 已经知道远端域名但没有ip地址无法赋值，对域名解析获得IP地址
+	//tcp_config.proto.tcp->remote_port = 8080;
+	//tcp_config.proto.tcp->remote_ip[0] = 192;
+	//tcp_config.proto.tcp->remote_ip[1] = 168;
+	//tcp_config.proto.tcp->remote_ip[2] = 4;
+	//tcp_config.proto.tcp->remote_ip[3] = 2;
+	//注册回调函数
+	espconn_regist_connectcb(&tcp_config,esp8266_tcp_connect_callback);
+	espconn_regist_disconcb (&tcp_config,esp8266_tcp_disconnect_callback);
+	//espconn_regist_sentcb(&tcp_config,esp8266_sent_callback); //注册成功发送⽹络数据的回调函数
+	//espconn_regist_recvcb(&tcp_config,esp8266_recv_callback); //注册成功接收⽹络数据的回调函数
+	//espconn_accept(&tcp_config);  //此时8266做sever与client通信
+	//创建DNS
+	espconn_gethostbyname(&tcp_config,dns_sever,&dns_ip,esp8266_dnsget_callback);
+
+	espconn_connect(&tcp_config);  //此时8266做client与sever通信
+}
+/*******************************软件定时器中断处理函数********************************/
+os_timer_t OS_timer_1;
+void OS_timer_interrupt(void)
+{
+	switch(wifi_station_get_connect_status())  //查询wifi连接状态
+	{
+	case 0: os_printf("\r\n====================STATION_IDLE====================\r\n");
+		break;
+	case 1: os_printf("\r\n=================STATION_CONNECTING=================\r\n");
+		break;
+	case 2: os_printf("\r\n================STATION_WRONG_PASSWORD===============\r\n");
+		break;
+	case 3: os_printf("\r\n=================STATION_NO_AP_FOUND=================\r\n");
+		break;
+	case 4: os_printf("\r\n==================STATION_CONNECT_FAIL================\r\n");
+		break;
+	case 5: os_printf("\r\n==================== STATION_GOT_IP===================\r\n");//连接成功
+			os_timer_disarm(&OS_timer_1);  //连接成功关闭定时器
+			esp8266_tcp_config(); //对tcp初始化
+		break;
+	}
+
+
+
+}
+/*******************************软件定时器初始化函数*********************************/
+
+
+void OS_timer_1_config(uint32 timer,u8 timer_repetitive)
+{
+	//uint32 timer 定时时间
+	//u8 timer_repetitive 是否重复  1重复  0不重复
+	os_timer_disarm	(&OS_timer_1);
+	os_timer_setfn(&OS_timer_1,(os_timer_func_t *)OS_timer_interrupt,NULL);
+	os_timer_arm(&OS_timer_1,timer, timer_repetitive);
+}
+/******************************************************************************
+ * FunctionName : user_init
+ * Description  : entry of user application, init user function here
+ * Parameters   : none
+ * Returns      : none
+*******************************************************************************/
+void ICACHE_FLASH_ATTR user_init(void)
+{
+	/**************************************************************************
+ 	 **********************************备注*************************************
+ 	 *esp8266 project
+ 	 *user_init 用户函数
+ 	 **************************************************************************
+	 **************************************************************************/
+	os_printf("\r\n========================================================\r\n");
+	os_printf("\r\n esp8266_project \r\n");
+	os_printf("\r\n IDE:Aithinker \r\n");
+	os_printf("\r\n SDK:nonos_v2.2 \r\n ");
+	os_printf("\r\n========================================================\r\n");
+
+	esp8266_station_config();
+	OS_timer_1_config(1000,1);  //初始化软件定时器  500ms一次
+
+
+	//esp8266_tcp_config();
+
+	switch(wifi_get_opmode())
+	{
+	case 0x01:os_printf(" \r\n Station Mode \r\n") ;
+	break;
+	case 0x02:os_printf("\r\n SoftAP Mode \r\n") ;
+	break;
+	case 0x03:os_printf(" \r\n Station+SoftAP Mode \r\n") ;
+	break;
+	}
+}
